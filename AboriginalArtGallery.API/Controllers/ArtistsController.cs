@@ -30,7 +30,7 @@ public class ArtistsController : ControllerBase
         var artist = await _context.Artists.FindAsync(id);
 
         if (artist == null)
-            return NotFound("Artist not found"); // ✅ FIXED
+            return NotFound("Artist not found");
 
         return Ok(artist);
     }
@@ -39,10 +39,22 @@ public class ArtistsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(Artist artist)
     {
+        if (string.IsNullOrWhiteSpace(artist.Name))
+            return BadRequest("Artist name is required");
+
+        var trimmedName = artist.Name.Trim();
+
+        var existingArtist = await _context.Artists
+            .FirstOrDefaultAsync(a => a.Name.ToLower() == trimmedName.ToLower());
+
+        if (existingArtist != null)
+            return Conflict("Artist with the same name already exists");
+
+        artist.Name = trimmedName;
+
         _context.Artists.Add(artist);
         await _context.SaveChangesAsync();
 
-        // ✅ FIXED (important for test)
         return CreatedAtAction(nameof(GetById), new { id = artist.Id }, artist);
     }
 
@@ -53,12 +65,24 @@ public class ArtistsController : ControllerBase
         var artist = await _context.Artists.FindAsync(id);
 
         if (artist == null)
-            return NotFound("Artist not found"); // optional improvement
+            return NotFound("Artist not found");
 
-        artist.Name = updatedArtist.Name;
+        if (string.IsNullOrWhiteSpace(updatedArtist.Name))
+            return BadRequest("Artist name is required");
+
+        var trimmedName = updatedArtist.Name.Trim();
+
+        var duplicateArtist = await _context.Artists
+            .FirstOrDefaultAsync(a => a.Id != id && a.Name.ToLower() == trimmedName.ToLower());
+
+        if (duplicateArtist != null)
+            return Conflict("Another artist with the same name already exists");
+
+        artist.Name = trimmedName;
         artist.Tribe = updatedArtist.Tribe;
         artist.Biography = updatedArtist.Biography;
         artist.BirthYear = updatedArtist.BirthYear;
+        artist.Country = updatedArtist.Country;
 
         await _context.SaveChangesAsync();
 
@@ -77,7 +101,6 @@ public class ArtistsController : ControllerBase
         _context.Artists.Remove(artist);
         await _context.SaveChangesAsync();
 
-        // ✅ FIXED (important for test)
         return NoContent();
     }
 }

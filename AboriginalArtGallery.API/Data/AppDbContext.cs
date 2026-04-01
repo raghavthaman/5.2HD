@@ -18,5 +18,9 @@ public class AppDbContext : DbContext
     {
         modelBuilder.Entity<ArtifactTag>()
             .HasKey(at => new { at.ArtifactId, at.TagId });
+
+        modelBuilder.Entity<Artist>()
+            .HasIndex(a => a.Name)
+            .IsUnique();
     }
 }
