@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AboriginalArtGallery.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+354a27122586738f83f951dfb8af27dc558b19f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("AboriginalArtGallery.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AboriginalArtGallery.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

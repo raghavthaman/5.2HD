@@ -132,3 +132,4 @@ C:\msys64\home\Raghav Thaman\SIT331_Backend\task5.2HD\AboriginalArtGallery\Abori
 C:\msys64\home\Raghav Thaman\SIT331_Backend\task5.2HD\AboriginalArtGallery\AboriginalArtGallery.API\obj\Debug\net10.0\AboriginalArtGallery.API.pdb
 C:\msys64\home\Raghav Thaman\SIT331_Backend\task5.2HD\AboriginalArtGallery\AboriginalArtGallery.API\obj\Debug\net10.0\AboriginalArtGallery.API.genruntimeconfig.cache
 C:\msys64\home\Raghav Thaman\SIT331_Backend\task5.2HD\AboriginalArtGallery\AboriginalArtGallery.API\obj\Debug\net10.0\ref\AboriginalArtGallery.API.dll
+C:\msys64\home\Raghav Thaman\SIT331_Backend\task5.2HD\AboriginalArtGallery\AboriginalArtGallery.API\obj\Debug\net10.0\AboriginalArtGallery.API.sourcelink.json
