@@ -424,7 +424,8 @@ nav {
   border-color: var(--ochre);
 }
 .input::placeholder {
-  color: #1a110a;
+  color: #8c7f6e;
+  opacity: 0.65;
 }
 .input-search {
   min-width: 260px;

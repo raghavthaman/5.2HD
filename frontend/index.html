@@ -305,7 +305,7 @@
                                 <div class="form-group">
                                     <label class="form-label">Gift Card Code</label>
                                     <div style="display:flex; gap:0.5rem;">
-                                        <input type="text" id="redeem-code" class="input" placeholder="GC-XXXXXXXX" style="text-transform:uppercase;">
+                                        <input type="text" id="redeem-code" class="input" placeholder="e.g., GC-XXXXXXXX" style="text-transform:uppercase;">
                                         <button class="btn btn-outline" onclick="applyRedeem()">Redeem</button>
                                     </div>
                                 </div>
@@ -334,16 +334,16 @@
                             <div id="card-details-form">
                                 <div class="form-group">
                                     <label class="form-label">Card Number</label>
-                                    <input type="text" id="card-num" class="input" placeholder="0000 0000 0000 0000" maxlength="19" oninput="formatCardNumber(event)">
+                                    <input type="text" id="card-num" class="input" placeholder="e.g., 4111 1111 1111 1111" maxlength="19" oninput="formatCardNumber(event)">
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label class="form-label">Expiry (MM/YY)</label>
-                                        <input type="text" id="card-exp" class="input" placeholder="MM/YY" maxlength="5">
+                                        <input type="text" id="card-exp" class="input" placeholder="e.g., 12/28" maxlength="5">
                                     </div>
                                     <div class="form-group">
                                         <label class="form-label">CVC</label>
-                                        <input type="text" id="card-cvc" class="input" placeholder="123" maxlength="4">
+                                        <input type="text" id="card-cvc" class="input" placeholder="e.g., 123" maxlength="4">
                                     </div>
                                 </div>
                             </div>
