@@ -1,0 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+namespace AboriginalArtGallery.API.Models;
+
+public class User
+{
+    public int Id { get; set; }
+
+    [Required]
+    public string Username { get; set; } = string.Empty;
+
+    [Required]
+    public string Email { get; set; } = string.Empty;
+
+    public string PasswordHash { get; set; } = string.Empty;
+
+    public string Role { get; set; } = "User";
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+[JsonIgnore]
+
+    public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+}

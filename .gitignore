@@ -1,5 +1,15 @@
 bin/
 obj/
+[Bb]in/
+[Oo]bj/
 .vs/
 *.user
 *.log
+appsettings.Development.json
+.env
+node_modules/
+venv/
+.idea/
+.vscode/
+*.db
+*.sqlite

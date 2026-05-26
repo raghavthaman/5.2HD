@@ -1,0 +1,2205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yilpinji — Aboriginal Art Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ═══════════════════════════════════════════════════════════
+   DESIGN TOKENS — warm earth / ochre palette
+═══════════════════════════════════════════════════════════ */
+      :root {
+        --ochre: #c97b3a;
+        --ochre-light: #e09b5b;
+        --ochre-dark: #9a5a24;
+        --earth: #1a110a;
+        --earth-mid: #2d1f14;
+        --earth-muted: #3f2e20;
+        --sand: #f0e0cc;
+        --sand-light: #fbf4ec;
+        --red-clay: #a83422;
+        --sage: #7a8c5c;
+        --white: #fdfaf6;
+
+        --font-display: "Playfair Display", serif;
+        --font-body: "DM Sans", sans-serif;
+
+        --radius: 4px;
+        --radius-lg: 10px;
+        --transition: 0.25s ease;
+        --shadow: 0 4px 24px rgba(26, 17, 10, 0.18);
+        --shadow-lg: 0 8px 48px rgba(26, 17, 10, 0.3);
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════════════ */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background: var(--sand-light);
+        color: var(--earth);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Dot-pattern background inspired by Aboriginal dot painting */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          radial-gradient(
+            circle,
+            rgba(201, 123, 58, 0.06) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle, rgba(201, 123, 58, 0.04) 1px, transparent 1px);
+        background-size:
+          32px 32px,
+          64px 64px;
+        background-position:
+          0 0,
+          16px 16px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   LAYOUT PAGES
+═══════════════════════════════════════════════════════════ */
+      .page {
+        display: none;
+        min-height: 100vh;
+        position: relative;
+        z-index: 1;
+      }
+      .page.active {
+        display: block;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════════════════════ */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2.5rem;
+        height: 68px;
+        background: var(--earth);
+        border-bottom: 2px solid var(--ochre-dark);
+      }
+
+      .nav-logo {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--ochre-light);
+        cursor: pointer;
+        letter-spacing: 0.02em;
+        transition: color var(--transition);
+      }
+      .nav-logo span {
+        color: var(--sand);
+      }
+      .nav-logo:hover {
+        color: var(--ochre);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .nav-btn {
+        padding: 0.5rem 1.1rem;
+        border: none;
+        background: transparent;
+        color: var(--sand);
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        font-weight: 400;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition:
+          background var(--transition),
+          color var(--transition);
+        letter-spacing: 0.03em;
+      }
+      .nav-btn:hover {
+        background: var(--earth-muted);
+        color: var(--ochre-light);
+      }
+      .nav-btn.active {
+        color: var(--ochre-light);
+        font-weight: 500;
+      }
+
+      .nav-auth {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.6rem 1.4rem;
+        border: 2px solid transparent;
+        border-radius: var(--radius);
+        font-family: var(--font-body);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all var(--transition);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: var(--ochre);
+        border-color: var(--ochre);
+        color: var(--white);
+      }
+      .btn-primary:hover {
+        background: var(--ochre-dark);
+        border-color: var(--ochre-dark);
+      }
+      .btn-outline {
+        background: transparent;
+        border-color: var(--ochre);
+        color: var(--ochre-light);
+      }
+      .btn-outline:hover {
+        background: var(--ochre);
+        color: var(--white);
+      }
+      .btn-ghost {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: transparent;
+        color: var(--sand);
+      }
+      .btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .btn-danger {
+        background: var(--red-clay);
+        border-color: var(--red-clay);
+        color: #fff;
+      }
+      .btn-danger:hover {
+        background: #8a2a1b;
+      }
+      .btn-sm {
+        padding: 0.35rem 0.9rem;
+        font-size: 0.8rem;
+      }
+
+      .user-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--earth-muted);
+        border-radius: 2rem;
+        padding: 0.3rem 0.9rem 0.3rem 0.5rem;
+      }
+      .user-pill-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--ochre);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      .user-pill-name {
+        color: var(--sand);
+        font-size: 0.85rem;
+      }
+      .user-pill-role {
+        font-size: 0.7rem;
+        color: var(--ochre-light);
+        background: rgba(201, 123, 58, 0.18);
+        padding: 0.1rem 0.4rem;
+        border-radius: 2rem;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════════ */
+      .hero {
+        position: relative;
+        background: linear-gradient(
+          135deg,
+          var(--earth) 0%,
+          var(--earth-mid) 60%,
+          #3a1f0d 100%
+        );
+        padding: 7rem 2.5rem 6rem;
+        overflow: hidden;
+      }
+
+      /* Concentric circles — dreamtime motif */
+      .hero::before {
+        content: "";
+        position: absolute;
+        right: -80px;
+        top: -80px;
+        width: 520px;
+        height: 520px;
+        border-radius: 50%;
+        border: 60px solid rgba(201, 123, 58, 0.08);
+        box-shadow:
+          0 0 0 30px rgba(201, 123, 58, 0.05),
+          0 0 0 60px rgba(201, 123, 58, 0.03);
+      }
+
+      .hero-content {
+        max-width: 680px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(201, 123, 58, 0.15);
+        border: 1px solid rgba(201, 123, 58, 0.3);
+        color: var(--ochre-light);
+        padding: 0.4rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+      }
+
+      .hero h1 {
+        font-family: var(--font-display);
+        font-size: clamp(2.8rem, 6vw, 4.5rem);
+        font-weight: 800;
+        line-height: 1.1;
+        color: var(--white);
+        margin-bottom: 1.25rem;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--ochre-light);
+      }
+
+      .hero p {
+        color: rgba(240, 224, 204, 0.75);
+        font-size: 1.125rem;
+        line-height: 1.7;
+        max-width: 520px;
+        margin-bottom: 2.25rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 3rem;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .stat-num {
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--ochre-light);
+      }
+      .stat-label {
+        font-size: 0.8rem;
+        color: rgba(240, 224, 204, 0.55);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   MAIN CONTENT AREA
+═══════════════════════════════════════════════════════════ */
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2.5rem;
+      }
+
+      .section {
+        padding: 4rem 0;
+      }
+      .section-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(201, 123, 58, 0.2);
+      }
+      .section-title {
+        font-family: var(--font-display);
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--earth);
+      }
+      .section-title small {
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: var(--ochre);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        display: block;
+        margin-bottom: 0.2rem;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   SEARCH / FILTER BAR
+═══════════════════════════════════════════════════════════ */
+      .filter-bar {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2.5rem;
+      }
+
+      .input {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+        border: 1.5px solid #d4c4b0;
+        border-radius: var(--radius);
+        background: var(--white);
+        color: var(--earth);
+        outline: none;
+        transition: border-color var(--transition);
+      }
+      .input:focus {
+        border-color: var(--ochre);
+      }
+      .input::placeholder {
+        color: #a89880;
+      }
+      .input-search {
+        min-width: 260px;
+        flex: 1;
+      }
+
+      select.input {
+        cursor: pointer;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   CARDS GRID
+═══════════════════════════════════════════════════════════ */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .card {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: 0 1px 8px rgba(26, 17, 10, 0.07);
+        border: 1px solid rgba(201, 123, 58, 0.1);
+        transition:
+          transform var(--transition),
+          box-shadow var(--transition);
+        cursor: pointer;
+      }
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+      }
+
+      .card-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #2d1f14, #c97b3a33);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--ochre);
+      }
+
+      .card-body {
+        padding: 1.25rem;
+      }
+
+      .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-bottom: 0.75rem;
+      }
+      .tag-chip {
+        font-size: 0.72rem;
+        padding: 0.15rem 0.6rem;
+        background: rgba(201, 123, 58, 0.1);
+        color: var(--ochre-dark);
+        border-radius: 2rem;
+        font-weight: 500;
+        letter-spacing: 0.03em;
+      }
+
+      .card-title {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--earth);
+        margin-bottom: 0.4rem;
+        line-height: 1.3;
+      }
+
+      .card-meta {
+        font-size: 0.82rem;
+        color: #8a7060;
+        margin-bottom: 0.75rem;
+      }
+      .card-meta strong {
+        color: var(--ochre-dark);
+      }
+
+      .card-desc {
+        font-size: 0.85rem;
+        color: #6a5040;
+        line-height: 1.55;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      /* Artist card variant */
+      .artist-card {
+        display: flex;
+        flex-direction: column;
+      }
+      .artist-card .card-avatar {
+        width: 100%;
+        height: 140px;
+        background: linear-gradient(135deg, var(--earth), var(--ochre-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .artist-card .card-avatar-inner {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--ochre);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--white);
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   DETAIL PAGE
+═══════════════════════════════════════════════════════════ */
+      .detail-page {
+        padding: 3rem 0;
+      }
+      .detail-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--ochre-dark);
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        transition: color var(--transition);
+      }
+      .detail-back:hover {
+        color: var(--ochre);
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+      }
+      @media (max-width: 768px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .detail-img {
+        width: 100%;
+        border-radius: var(--radius-lg);
+        aspect-ratio: 1;
+        object-fit: cover;
+        background: linear-gradient(
+          135deg,
+          var(--earth-mid),
+          var(--ochre-dark)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        color: var(--ochre);
+        box-shadow: var(--shadow-lg);
+      }
+
+
+
+      .detail-breadcrumb {
+        font-size: 0.8rem;
+        color: var(--ochre);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.75rem;
+      }
+
+      .detail-title {
+        font-family: var(--font-display);
+        font-size: 2.25rem;
+        font-weight: 800;
+        line-height: 1.2;
+        color: var(--earth);
+        margin-bottom: 1rem;
+      }
+
+      .detail-meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        padding: 1.25rem 0;
+        border-top: 1px solid rgba(201, 123, 58, 0.15);
+        border-bottom: 1px solid rgba(201, 123, 58, 0.15);
+        margin-bottom: 1.5rem;
+      }
+
+      .detail-meta-label {
+        font-size: 0.72rem;
+        color: #a89880;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.2rem;
+      }
+      .detail-meta-value {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--earth);
+      }
+
+      .detail-desc {
+        font-size: 1rem;
+        line-height: 1.75;
+        color: #4a3828;
+        margin-bottom: 1.5rem;
+      }
+
+      /* Comments section */
+      .comments-section {
+        margin-top: 3rem;
+      }
+      .comment-form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+      }
+      textarea.input {
+        resize: vertical;
+        min-height: 90px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+      .comment-item {
+        padding: 1rem 1.25rem;
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        border-left: 3px solid var(--ochre);
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 4px rgba(26, 17, 10, 0.05);
+      }
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.4rem;
+      }
+      .comment-author {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--ochre-dark);
+      }
+      .comment-date {
+        font-size: 0.75rem;
+        color: #a89880;
+      }
+      .comment-text {
+        font-size: 0.9rem;
+        color: var(--earth);
+        line-height: 1.55;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   AUTH MODAL
+═══════════════════════════════════════════════════════════ */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+        background: rgba(26, 17, 10, 0.7);
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      .modal {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        width: min(480px, 92vw);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        animation: modal-in 0.2s ease;
+      }
+      @keyframes modal-in {
+        from {
+          opacity: 0;
+          transform: translateY(-12px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1.25rem;
+        background: none;
+        border: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: #a89880;
+        transition: color var(--transition);
+      }
+      .modal-close:hover {
+        color: var(--earth);
+      }
+
+      .modal-title {
+        font-family: var(--font-display);
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--earth);
+        margin-bottom: 0.25rem;
+      }
+      .modal-sub {
+        font-size: 0.875rem;
+        color: #8a7060;
+        margin-bottom: 1.75rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1.1rem;
+      }
+      .form-label {
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--earth-muted);
+        letter-spacing: 0.03em;
+      }
+      .form-error {
+        font-size: 0.78rem;
+        color: var(--red-clay);
+        margin-top: 0.2rem;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 1.75rem;
+        border-bottom: 2px solid #e0cdb8;
+      }
+      .tab {
+        flex: 1;
+        padding: 0.7rem 1rem;
+        background: none;
+        border: none;
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        cursor: pointer;
+        color: #a89880;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        transition: all var(--transition);
+      }
+      .tab.active {
+        color: var(--ochre);
+        border-bottom-color: var(--ochre);
+        font-weight: 600;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   ADMIN PANEL
+═══════════════════════════════════════════════════════════ */
+      .admin-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        min-height: calc(100vh - 68px);
+      }
+      .admin-sidebar {
+        background: var(--earth);
+        padding: 2rem 0;
+      }
+      .admin-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.75rem 1.5rem;
+        color: var(--sand);
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition:
+          background var(--transition),
+          color var(--transition);
+        border-left: 3px solid transparent;
+      }
+      .admin-nav-item:hover {
+        background: var(--earth-muted);
+      }
+      .admin-nav-item.active {
+        background: var(--earth-muted);
+        color: var(--ochre-light);
+        border-left-color: var(--ochre);
+      }
+      .admin-nav-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: rgba(240, 224, 204, 0.35);
+        padding: 0.6rem 1.5rem 0.2rem;
+      }
+
+      .admin-content {
+        padding: 2.5rem;
+        background: var(--sand-light);
+      }
+      .admin-header {
+        margin-bottom: 2rem;
+      }
+      .admin-header h2 {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: var(--earth);
+      }
+
+      /* Create/Edit form */
+      .form-card {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        border: 1px solid rgba(201, 123, 58, 0.12);
+        margin-bottom: 2rem;
+        box-shadow: 0 1px 6px rgba(26, 17, 10, 0.05);
+      }
+      .form-card-title {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--earth);
+        margin-bottom: 1.5rem;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      /* Data table */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: 0 1px 6px rgba(26, 17, 10, 0.05);
+      }
+      .data-table th {
+        padding: 0.85rem 1.25rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #8a7060;
+        background: #faf2ea;
+        border-bottom: 1px solid #e8d8c4;
+      }
+      .data-table td {
+        padding: 0.9rem 1.25rem;
+        font-size: 0.875rem;
+        color: var(--earth);
+        border-bottom: 1px solid #f0e4d4;
+      }
+      .data-table tr:last-child td {
+        border-bottom: none;
+      }
+      .data-table tr:hover td {
+        background: #fbf4ec;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════════ */
+      #toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .toast-item {
+        padding: 0.85rem 1.25rem;
+        border-radius: var(--radius);
+        font-size: 0.875rem;
+        font-weight: 500;
+        box-shadow: var(--shadow);
+        animation: toast-in 0.25s ease;
+        min-width: 240px;
+        max-width: 380px;
+      }
+      @keyframes toast-in {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .toast-success {
+        background: #2d6a4f;
+        color: #fff;
+      }
+      .toast-error {
+        background: var(--red-clay);
+        color: #fff;
+      }
+      .toast-info {
+        background: var(--ochre);
+        color: #fff;
+      }
+
+      /* ═══════════════════════════════════════════════════════════
+   MISC
+═══════════════════════════════════════════════════════════ */
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #a89880;
+      }
+      .empty-state .empty-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+      }
+      .empty-state h3 {
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+        color: var(--earth-muted);
+        margin-bottom: 0.5rem;
+      }
+
+      .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid rgba(201, 123, 58, 0.2);
+        border-top-color: var(--ochre);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        margin: 3rem auto;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading {
+        text-align: center;
+        padding: 3rem;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.2rem 0.6rem;
+        border-radius: 2rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .badge-admin {
+        background: rgba(168, 52, 34, 0.12);
+        color: var(--red-clay);
+      }
+      .badge-user {
+        background: rgba(122, 140, 92, 0.15);
+        color: var(--sage);
+      }
+
+      .divider {
+        border: none;
+        border-top: 1px solid rgba(201, 123, 58, 0.15);
+        margin: 2rem 0;
+      }
+
+      /* Footer */
+      footer {
+        background: var(--earth);
+        color: rgba(240, 224, 204, 0.55);
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.82rem;
+        margin-top: 4rem;
+      }
+      footer strong {
+        color: var(--ochre-light);
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          padding: 0 1.25rem;
+        }
+        .hero {
+          padding: 4rem 1.25rem 3rem;
+        }
+        .hero-stats {
+          flex-wrap: wrap;
+          gap: 1.5rem;
+        }
+        .container {
+          padding: 0 1.25rem;
+        }
+        .admin-layout {
+          grid-template-columns: 1fr;
+        }
+        .admin-sidebar {
+          display: none;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ───────────────────────── NAVBAR ───────────────────────── -->
+    <nav>
+      <div class="nav-logo" onclick="showPage('home')">
+        Yilpinji<span> Gallery</span>
+      </div>
+      <div class="nav-links">
+        <button class="nav-btn active" onclick="showPage('home')">Home</button>
+        <button class="nav-btn" onclick="showPage('artifacts')">
+          Artworks
+        </button>
+        <button class="nav-btn" onclick="showPage('artists')">Artists</button>
+      </div>
+      <div class="nav-auth" id="nav-auth">
+        <button class="btn btn-ghost btn-sm" onclick="openModal('login')">
+          Log in
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('register')">
+          Register
+        </button>
+      </div>
+    </nav>
+
+    <!-- ───────────────────────── TOAST ───────────────────────── -->
+    <div id="toast"></div>
+
+    <!-- ═════════════════════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════════════════════ -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="hero-badge">🎨 Aboriginal Art of Australia</div>
+          <h1>Stories Written<br />in <em>Ochre & Earth</em></h1>
+          <p>
+            Explore the world's oldest living artistic tradition — discover
+            artworks, artists, and the sacred symbols of Australia's First
+            Peoples.
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="showPage('artifacts')">
+              Explore Artworks
+            </button>
+            <button class="btn btn-outline" onclick="showPage('artists')">
+              Meet the Artists
+            </button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <div class="stat-num" id="stat-artifacts">—</div>
+              <div class="stat-label">Artworks</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num" id="stat-artists">—</div>
+              <div class="stat-label">Artists</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num" id="stat-tags">—</div>
+              <div class="stat-label">Art Styles</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured artworks preview -->
+      <div class="container">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">
+              <small>Explore</small>Recent Artworks
+            </div>
+            <button
+              class="btn btn-outline btn-sm"
+              onclick="showPage('artifacts')"
+            >
+              View All →
+            </button>
+          </div>
+          <div class="grid" id="home-artifacts-grid">
+            <div class="loading"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════
+     PAGE: ARTIFACTS
+════════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-artifacts">
+      <div class="container">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title"><small>Collection</small>Artworks</div>
+            <span
+              id="artifacts-count"
+              style="font-size: 0.85rem; color: #a89880"
+            ></span>
+          </div>
+          <div class="filter-bar">
+            <input
+              type="text"
+              class="input input-search"
+              placeholder="Search by title…"
+              id="artifact-search"
+              oninput="debounceArtifacts()"
+            />
+            <input
+              type="text"
+              class="input"
+              placeholder="Art type…"
+              id="artifact-type"
+              oninput="debounceArtifacts()"
+              style="width: 160px"
+            />
+          </div>
+          <div class="grid" id="artifacts-grid">
+            <div class="loading"><div class="spinner"></div></div>
+          </div>
+          <div
+            id="artifacts-pagination"
+            style="
+              margin-top: 2rem;
+              display: flex;
+              gap: 0.5rem;
+              justify-content: center;
+            "
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════
+     PAGE: ARTIFACT DETAIL
+════════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-artifact-detail">
+      <div class="container">
+        <div class="detail-page" id="artifact-detail-content">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════
+     PAGE: ARTISTS
+════════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-artists">
+      <div class="container">
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title"><small>People</small>Artists</div>
+            <span
+              id="artists-count"
+              style="font-size: 0.85rem; color: #a89880"
+            ></span>
+          </div>
+          <div class="filter-bar">
+            <input
+              type="text"
+              class="input input-search"
+              placeholder="Search by name or tribe…"
+              id="artist-search"
+              oninput="debounceArtists()"
+            />
+          </div>
+          <div class="grid" id="artists-grid">
+            <div class="loading"><div class="spinner"></div></div>
+          </div>
+          <div
+            id="artists-pagination"
+            style="
+              margin-top: 2rem;
+              display: flex;
+              gap: 0.5rem;
+              justify-content: center;
+            "
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════
+     PAGE: ARTIST DETAIL
+════════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-artist-detail">
+      <div class="container">
+        <div class="detail-page" id="artist-detail-content">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════
+     PAGE: ADMIN
+════════════════════════════════════════════════════════════ -->
+    <div class="page" id="page-admin">
+      <div class="admin-layout">
+        <div class="admin-sidebar">
+          <div class="admin-nav-label">Manage</div>
+          <div class="admin-nav-item active" onclick="adminSection('artists')">
+            🎨 Artists
+          </div>
+          <div class="admin-nav-item" onclick="adminSection('artifacts')">
+            🖼️ Artworks
+          </div>
+          <div class="admin-nav-item" onclick="adminSection('tags')">
+            🏷️ Tags
+          </div>
+          <div class="admin-nav-item" onclick="adminSection('users')">
+            👥 Users
+          </div>
+        </div>
+        <div class="admin-content" id="admin-content">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════════════════════════════════════════════════════
+     AUTH MODAL
+════════════════════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="auth-modal">
+      <div class="modal">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="tabs">
+          <button
+            class="tab active"
+            id="tab-login"
+            onclick="switchTab('login')"
+          >
+            Log In
+          </button>
+          <button class="tab" id="tab-register" onclick="switchTab('register')">
+            Register
+          </button>
+        </div>
+
+        <!-- Login form -->
+        <div id="form-login">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input
+              type="email"
+              class="input"
+              id="login-email"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input
+              type="password"
+              class="input"
+              id="login-password"
+              placeholder="Your password"
+            />
+          </div>
+          <div
+            id="login-error"
+            class="form-error"
+            style="margin-bottom: 1rem"
+          ></div>
+          <button
+            class="btn btn-primary"
+            style="width: 100%"
+            onclick="doLogin()"
+          >
+            Log In
+          </button>
+        </div>
+
+        <!-- Register form -->
+        <div id="form-register" style="display: none">
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input
+              type="text"
+              class="input"
+              id="reg-username"
+              placeholder="yourname"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input
+              type="email"
+              class="input"
+              id="reg-email"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password (min. 8 characters)</label>
+            <input
+              type="password"
+              class="input"
+              id="reg-password"
+              placeholder="Minimum 8 characters"
+            />
+          </div>
+          <div
+            id="reg-error"
+            class="form-error"
+            style="margin-bottom: 1rem"
+          ></div>
+          <button
+            class="btn btn-primary"
+            style="width: 100%"
+            onclick="doRegister()"
+          >
+            Create Account
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <strong>Yilpinji Aboriginal Art Gallery</strong> — Task 5.2 HD Backend
+      Project<br />
+      <span style="font-size: 0.75rem; opacity: 0.6"
+        >ASP.NET Core · PostgreSQL · JWT Authentication</span
+      >
+    </footer>
+
+    <script>
+      // ═══════════════════════════════════════════════════════════
+      // CONFIG
+      // ═══════════════════════════════════════════════════════════
+      const API = "http://localhost:5161"; // Change to your API URL
+
+      // ═══════════════════════════════════════════════════════════
+      // STATE
+      // ═══════════════════════════════════════════════════════════
+      let state = {
+        token: localStorage.getItem("gallery_token"),
+        user: JSON.parse(localStorage.getItem("gallery_user") || "null"),
+        currentPage: "home",
+        artifactPage: 1,
+        artistPage: 1,
+        adminSection: "artists",
+      };
+
+      // ═══════════════════════════════════════════════════════════
+      // API HELPERS
+      // ═══════════════════════════════════════════════════════════
+      async function api(path, opts = {}) {
+        const headers = {
+          "Content-Type": "application/json",
+          ...(opts.headers || {}),
+        };
+        if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
+        const res = await fetch(`${API}${path}`, { ...opts, headers });
+        const data = await res.json().catch(() => ({}));
+        return { ok: res.ok, status: res.status, data };
+      }
+
+      const get = (path) => api(path, { method: "GET" });
+      const post = (path, body) =>
+        api(path, { method: "POST", body: JSON.stringify(body) });
+      const put = (path, body) =>
+        api(path, { method: "PUT", body: JSON.stringify(body) });
+      const del = (path) => api(path, { method: "DELETE" });
+
+      // ═══════════════════════════════════════════════════════════
+      // TOAST
+      // ═══════════════════════════════════════════════════════════
+      function toast(msg, type = "info") {
+        const el = document.createElement("div");
+        el.className = `toast-item toast-${type}`;
+        el.textContent = msg;
+        document.getElementById("toast").appendChild(el);
+        setTimeout(() => el.remove(), 3500);
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      // PAGE NAVIGATION
+      // ═══════════════════════════════════════════════════════════
+      function showPage(name) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(`page-${name}`).classList.add("active");
+
+        const navMap = { home: 0, artifacts: 1, artists: 2 };
+        if (navMap[name] !== undefined)
+          document
+            .querySelectorAll(".nav-btn")
+            [navMap[name]]?.classList.add("active");
+
+        window.scrollTo(0, 0);
+
+        if (name === "home") loadHome();
+        if (name === "artifacts") loadArtifacts();
+        if (name === "artists") loadArtists();
+        if (name === "admin") {
+          if (!isAdmin()) {
+            toast("Admin access required", "error");
+            return;
+          }
+          loadAdmin();
+        }
+      }
+
+      const isLoggedIn = () => !!state.token;
+      const isAdmin = () => state.user?.role === "Admin";
+
+      // ═══════════════════════════════════════════════════════════
+      // AUTH
+      // ═══════════════════════════════════════════════════════════
+      function openModal(tab = "login") {
+        document.getElementById("auth-modal").classList.add("open");
+        switchTab(tab);
+      }
+      function closeModal() {
+        document.getElementById("auth-modal").classList.remove("open");
+      }
+
+      function switchTab(tab) {
+        document.getElementById("form-login").style.display =
+          tab === "login" ? "" : "none";
+        document.getElementById("form-register").style.display =
+          tab === "register" ? "" : "none";
+        document
+          .getElementById("tab-login")
+          .classList.toggle("active", tab === "login");
+        document
+          .getElementById("tab-register")
+          .classList.toggle("active", tab === "register");
+      }
+
+      async function doLogin() {
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value;
+        document.getElementById("login-error").textContent = "";
+
+        const r = await post("/api/auth/login", { email, password });
+        if (!r.ok) {
+          document.getElementById("login-error").textContent =
+            r.data?.message || "Login failed";
+          return;
+        }
+
+        state.token = r.data.token;
+        state.user = { username: r.data.username, role: r.data.role };
+        localStorage.setItem("gallery_token", state.token);
+        localStorage.setItem("gallery_user", JSON.stringify(state.user));
+        closeModal();
+        renderNav();
+        toast(`Welcome back, ${r.data.username}! 🎨`, "success");
+      }
+
+      async function doRegister() {
+        const username = document.getElementById("reg-username").value.trim();
+        const email = document.getElementById("reg-email").value.trim();
+        const password = document.getElementById("reg-password").value;
+        document.getElementById("reg-error").textContent = "";
+
+        const r = await post("/api/auth/register", {
+          username,
+          email,
+          password,
+        });
+        if (!r.ok) {
+          document.getElementById("reg-error").textContent =
+            r.data?.message || JSON.stringify(r.data);
+          return;
+        }
+        toast("Account created! Please log in.", "success");
+        switchTab("login");
+        document.getElementById("login-email").value = email;
+      }
+
+      function doLogout() {
+        state.token = null;
+        state.user = null;
+        localStorage.removeItem("gallery_token");
+        localStorage.removeItem("gallery_user");
+        renderNav();
+        showPage("home");
+        toast("Logged out", "info");
+      }
+
+      function renderNav() {
+        const el = document.getElementById("nav-auth");
+        if (isLoggedIn()) {
+          el.innerHTML = `
+      <div class="user-pill">
+        <div class="user-pill-avatar">${state.user.username[0].toUpperCase()}</div>
+        <span class="user-pill-name">${state.user.username}</span>
+        <span class="user-pill-role">${state.user.role}</span>
+      </div>
+      ${isAdmin() ? `<button class="btn btn-outline btn-sm" onclick="showPage('admin')">Admin</button>` : ""}
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Log out</button>
+    `;
+        } else {
+          el.innerHTML = `
+      <button class="btn btn-ghost btn-sm" onclick="openModal('login')">Log in</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('register')">Register</button>
+    `;
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      // HOME
+      // ═══════════════════════════════════════════════════════════
+      async function loadHome() {
+        const [ar, art, tags] = await Promise.all([
+          get("/api/artifacts?pageSize=6"),
+          get("/api/artists?pageSize=1"),
+          get("/api/tags"),
+        ]);
+        if (ar.ok) {
+          document.getElementById("stat-artifacts").textContent =
+            ar.data.total ?? "—";
+          renderArtifactCards(ar.data.items || [], "home-artifacts-grid");
+        }
+        if (art.ok)
+          document.getElementById("stat-artists").textContent =
+            art.data.total ?? "—";
+        if (tags.ok)
+          document.getElementById("stat-tags").textContent =
+            tags.data.length ?? "—";
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      // ARTIFACTS
+      // ═══════════════════════════════════════════════════════════
+      let artifactTimer;
+      function debounceArtifacts() {
+        clearTimeout(artifactTimer);
+        artifactTimer = setTimeout(() => {
+          state.artifactPage = 1;
+          loadArtifacts();
+        }, 400);
+      }
+
+      async function loadArtifacts(page = state.artifactPage) {
+        state.artifactPage = page;
+        const search =
+          document.getElementById("artifact-search")?.value.trim() || "";
+        const artType =
+          document.getElementById("artifact-type")?.value.trim() || "";
+
+        let url = `/api/artifacts?page=${page}&pageSize=12`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (artType) url += `&artType=${encodeURIComponent(artType)}`;
+
+        document.getElementById("artifacts-grid").innerHTML =
+          '<div class="loading"><div class="spinner"></div></div>';
+        const r = await get(url);
+        if (!r.ok) {
+          document.getElementById("artifacts-grid").innerHTML =
+            '<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load artworks</h3><p>Make sure the API is running</p></div>';
+          return;
+        }
+
+        document.getElementById("artifacts-count").textContent =
+          `${r.data.total} artworks`;
+        renderArtifactCards(r.data.items || [], "artifacts-grid");
+        renderPagination("artifacts-pagination", r.data, loadArtifacts);
+      }
+
+      function renderArtifactCards(items, containerId) {
+        const grid = document.getElementById(containerId);
+        if (!items.length) {
+          grid.innerHTML =
+            '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🖼️</div><h3>No artworks found</h3><p>Try a different search term</p></div>';
+          return;
+        }
+        grid.innerHTML = items
+          .map(
+            (a) => `
+    <div class="card" onclick="loadArtifactDetail(${a.id})">
+      <div class="card-img">${a.imageUrl ? `<img src="${a.imageUrl}" alt="${a.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'" />` : "🎨"}</div>
+      <div class="card-body">
+        ${
+          a.tags?.length
+            ? `<div class="card-tags">${a.tags
+                .slice(0, 3)
+                .map((t) => `<span class="tag-chip">${t}</span>`)
+                .join("")}</div>`
+            : ""
+        }
+        <div class="card-title">${a.title}</div>
+        <div class="card-meta">${a.artistName ? `By <strong>${a.artistName}</strong>` : ""} ${a.yearCreated ? `· ${a.yearCreated}` : ""}</div>
+        ${a.description ? `<div class="card-desc">${a.description}</div>` : ""}
+      </div>
+    </div>
+  `,
+          )
+          .join("");
+      }
+
+      async function loadArtifactDetail(id) {
+        showPage("artifact-detail");
+        const r = await get(`/api/artifacts/${id}`);
+        if (!r.ok) {
+          document.getElementById("artifact-detail-content").innerHTML =
+            "<p>Artwork not found.</p>";
+          return;
+        }
+        const a = r.data;
+
+        document.getElementById("artifact-detail-content").innerHTML = `
+    <div class="detail-back" onclick="showPage('artifacts')">← Back to Artworks</div>
+    <div class="detail-grid">
+      <div class="detail-img">${a.imageUrl ? `<img src="${a.imageUrl}" alt="${a.title}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" onerror="this.innerHTML='🎨'" />` : "🎨"}</div>
+      <div class="detail-info">
+        <div class="detail-breadcrumb">Artwork</div>
+        <h1 class="detail-title">${a.title}</h1>
+        ${a.tags?.length ? `<div class="card-tags" style="margin-bottom:1.25rem">${a.tags.map((t) => `<span class="tag-chip">${t}</span>`).join("")}</div>` : ""}
+        <div class="detail-meta-row">
+          ${a.artistName ? `<div class="detail-meta-item"><div class="detail-meta-label">Artist</div><div class="detail-meta-value" style="cursor:pointer;color:var(--ochre-dark)" onclick="loadArtistByName('${a.artistName}')">${a.artistName}</div></div>` : ""}
+          ${a.artType ? `<div class="detail-meta-item"><div class="detail-meta-label">Art Type</div><div class="detail-meta-value">${a.artType}</div></div>` : ""}
+          ${a.yearCreated ? `<div class="detail-meta-item"><div class="detail-meta-label">Year Created</div><div class="detail-meta-value">${a.yearCreated}</div></div>` : ""}
+        </div>
+        ${a.description ? `<p class="detail-desc">${a.description}</p>` : ""}
+
+        <!-- Comments -->
+        <div class="comments-section">
+          <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:1rem;">Comments (${a.comments?.length || 0})</h3>
+          ${
+            isLoggedIn()
+              ? `
+            <div class="comment-form">
+              <textarea class="input" id="new-comment-${a.id}" placeholder="Share your thoughts about this artwork…"></textarea>
+              <button class="btn btn-primary btn-sm" onclick="postComment(${a.id})">Post Comment</button>
+            </div>
+          `
+              : `<p style="font-size:0.85rem;color:#A89880;margin-bottom:1rem;"><a href="#" onclick="openModal('login')" style="color:var(--ochre-dark)">Log in</a> to leave a comment.</p>`
+          }
+          <div id="comments-list-${a.id}">
+            ${renderComments(a.comments || [])}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+      }
+
+      function renderComments(comments) {
+        if (!comments.length)
+          return '<p style="font-size:0.85rem;color:#A89880;">No comments yet. Be the first!</p>';
+        return comments
+          .map(
+            (c) => `
+    <div class="comment-item">
+      <div class="comment-header">
+        <span class="comment-author">${c.username || "Anonymous"}</span>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span class="comment-date">${new Date(c.createdAt).toLocaleDateString()}</span>
+          ${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="deleteComment(${c.id}, ${c.artifactId})">Delete</button>` : ""}
+        </div>
+      </div>
+      <div class="comment-text">${c.content}</div>
+    </div>
+  `,
+          )
+          .join("");
+      }
+
+      async function postComment(artifactId) {
+        const content = document
+          .getElementById(`new-comment-${artifactId}`)
+          ?.value.trim();
+        if (!content) return toast("Please write something first", "error");
+        const r = await post("/api/comments", { content, artifactId });
+        if (!r.ok) {
+          toast(r.data?.message || "Failed to post comment", "error");
+          return;
+        }
+        toast("Comment posted!", "success");
+        loadArtifactDetail(artifactId);
+      }
+
+      async function deleteComment(commentId, artifactId) {
+        if (!confirm("Delete this comment?")) return;
+        const r = await del(`/api/comments/${commentId}`);
+        if (r.ok) {
+          toast("Comment deleted", "info");
+          loadArtifactDetail(artifactId);
+        } else toast(r.data?.message || "Failed", "error");
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      // ARTISTS
+      // ═══════════════════════════════════════════════════════════
+      let artistTimer;
+      function debounceArtists() {
+        clearTimeout(artistTimer);
+        artistTimer = setTimeout(() => {
+          state.artistPage = 1;
+          loadArtists();
+        }, 400);
+      }
+
+      async function loadArtists(page = state.artistPage) {
+        state.artistPage = page;
+        const search =
+          document.getElementById("artist-search")?.value.trim() || "";
+        let url = `/api/artists?page=${page}&pageSize=12`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+
+        document.getElementById("artists-grid").innerHTML =
+          '<div class="loading"><div class="spinner"></div></div>';
+        const r = await get(url);
+        if (!r.ok) {
+          document.getElementById("artists-grid").innerHTML =
+            '<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load artists</h3></div>';
+          return;
+        }
+
+        document.getElementById("artists-count").textContent =
+          `${r.data.total} artists`;
+        const grid = document.getElementById("artists-grid");
+        const items = r.data.items || [];
+        if (!items.length) {
+          grid.innerHTML =
+            '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👤</div><h3>No artists found</h3></div>';
+          return;
+        }
+        grid.innerHTML = items
+          .map(
+            (a) => `
+    <div class="card artist-card" onclick="loadArtistDetail(${a.id})">
+      <div class="card-avatar">
+        <div class="card-avatar-inner">${a.name[0]}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${a.name}</div>
+        <div class="card-meta">${a.tribe ? `<strong>${a.tribe}</strong> · ` : ""}${a.country}</div>
+        ${a.biography ? `<div class="card-desc">${a.biography}</div>` : ""}
+        <div style="margin-top:0.75rem;"><span class="tag-chip">${a.artifactCount} artwork${a.artifactCount !== 1 ? "s" : ""}</span></div>
+      </div>
+    </div>
+  `,
+          )
+          .join("");
+        renderPagination("artists-pagination", r.data, loadArtists);
+      }
+
+      async function loadArtistDetail(id) {
+        showPage("artist-detail");
+        const r = await get(`/api/artists/${id}`);
+        if (!r.ok) {
+          document.getElementById("artist-detail-content").innerHTML =
+            "<p>Artist not found.</p>";
+          return;
+        }
+        const a = r.data;
+
+        document.getElementById("artist-detail-content").innerHTML = `
+    <div class="detail-back" onclick="showPage('artists')">← Back to Artists</div>
+    <div class="detail-grid">
+      <div class="detail-img" style="height:360px;font-size:6rem;">
+        ${a.name[0]}
+      </div>
+      <div class="detail-info">
+        <div class="detail-breadcrumb">Artist</div>
+        <h1 class="detail-title">${a.name}</h1>
+        <div class="detail-meta-row">
+          ${a.tribe ? `<div class="detail-meta-item"><div class="detail-meta-label">Tribe</div><div class="detail-meta-value">${a.tribe}</div></div>` : ""}
+          ${a.birthYear ? `<div class="detail-meta-item"><div class="detail-meta-label">Born</div><div class="detail-meta-value">${a.birthYear}</div></div>` : ""}
+          <div class="detail-meta-item"><div class="detail-meta-label">Country</div><div class="detail-meta-value">${a.country}</div></div>
+        </div>
+        ${a.biography ? `<p class="detail-desc">${a.biography}</p>` : ""}
+      </div>
+    </div>
+    ${
+      a.artifacts?.length
+        ? `
+      <hr class="divider" />
+      <div class="section-header" style="margin-top:1rem;">
+        <div class="section-title">Artworks by ${a.name}</div>
+      </div>
+      <div class="grid">${a.artifacts
+        .map(
+          (art) => `
+        <div class="card" onclick="loadArtifactDetail(${art.id})">
+          <div class="card-img">${art.imageUrl ? `<img src="${art.imageUrl}" alt="${art.title}" style="width:100%;height:100%;object-fit:cover;" />` : "🎨"}</div>
+          <div class="card-body">
+            <div class="card-title">${art.title}</div>
+            <div class="card-meta">${art.artType || ""} ${art.yearCreated ? "· " + art.yearCreated : ""}</div>
+          </div>
+        </div>`,
+        )
+        .join("")}</div>
+    `
+        : ""
+    }
+  `;
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      // PAGINATION
+      // ═══════════════════════════════════════════════════════════
+      function renderPagination(containerId, data, loadFn) {
+        const el = document.getElementById(containerId);
+        if (!el || data.totalPages <= 1) {
+          if (el) el.innerHTML = "";
+          return;
+        }
+        let html = "";
+        for (let i = 1; i <= data.totalPages; i++) {
+          html += `<button class="btn btn-sm ${i === data.page ? "btn-primary" : "btn-outline"}" onclick="${loadFn.name}(${i})">${i}</button>`;
+        }
+        el.innerHTML = html;
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      // ADMIN PANEL
+      // ═══════════════════════════════════════════════════════════
+      function adminSection(section) {
+        state.adminSection = section;
+        document.querySelectorAll(".admin-nav-item").forEach((el, i) => {
+          const names = ["artists", "artifacts", "tags", "users"];
+          el.classList.toggle("active", names[i] === section);
+        });
+        loadAdmin();
+      }
+
+      async function loadAdmin() {
+        const el = document.getElementById("admin-content");
+        const s = state.adminSection;
+        el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+        if (s === "artists") await renderAdminArtists(el);
+        if (s === "artifacts") await renderAdminArtifacts(el);
+        if (s === "tags") await renderAdminTags(el);
+        if (s === "users") await renderAdminUsers(el);
+      }
+
+      async function renderAdminArtists(el) {
+        const r = await get("/api/artists?pageSize=100");
+        const artists = r.ok ? r.data.items || [] : [];
+        el.innerHTML = `
+    <div class="admin-header"><h2>🎨 Manage Artists</h2></div>
+    <div class="form-card">
+      <div class="form-card-title" id="artist-form-title">Add New Artist</div>
+      <input type="hidden" id="edit-artist-id" />
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Name *</label><input type="text" class="input" id="artist-name" /></div>
+        <div class="form-group"><label class="form-label">Tribe</label><input type="text" class="input" id="artist-tribe" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Birth Year</label><input type="number" class="input" id="artist-birth" placeholder="e.g. 1952" /></div>
+        <div class="form-group"><label class="form-label">Country</label><input type="text" class="input" id="artist-country" value="Australia" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Biography</label><textarea class="input" id="artist-bio" style="min-height:80px;"></textarea></div>
+      <div style="display:flex;gap:0.75rem;">
+        <button class="btn btn-primary" onclick="saveArtist()">Save Artist</button>
+        <button class="btn btn-ghost" onclick="clearArtistForm()">Clear</button>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Name</th><th>Tribe</th><th>Born</th><th>Artworks</th><th>Actions</th></tr></thead>
+      <tbody>${artists
+        .map(
+          (a) => `
+        <tr>
+          <td><strong>${a.name}</strong></td>
+          <td>${a.tribe || "—"}</td>
+          <td>${a.birthYear || "—"}</td>
+          <td>${a.artifactCount}</td>
+          <td style="display:flex;gap:0.4rem;">
+            <button class="btn btn-outline btn-sm" onclick="editArtist(${a.id},'${a.name.replace(/'/g, "\\'")}','${(a.tribe || "").replace(/'/g, "\\'")}','${(a.biography || "").replace(/'/g, "\\'")}',${a.birthYear || "null"},'${a.country}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteArtist(${a.id})">Delete</button>
+          </td>
+        </tr>`,
+        )
+        .join("")}
+      </tbody>
+    </table>`;
+      }
+
+      function editArtist(id, name, tribe, bio, birth, country) {
+        document.getElementById("edit-artist-id").value = id;
+        document.getElementById("artist-name").value = name;
+        document.getElementById("artist-tribe").value = tribe;
+        document.getElementById("artist-bio").value = bio;
+        document.getElementById("artist-birth").value = birth || "";
+        document.getElementById("artist-country").value = country;
+        document.getElementById("artist-form-title").textContent =
+          "Edit Artist";
+        document
+          .getElementById("artist-name")
+          .scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      function clearArtistForm() {
+        [
+          "edit-artist-id",
+          "artist-name",
+          "artist-tribe",
+          "artist-bio",
+          "artist-birth",
+        ].forEach((id) => (document.getElementById(id).value = ""));
+        document.getElementById("artist-country").value = "Australia";
+        document.getElementById("artist-form-title").textContent =
+          "Add New Artist";
+      }
+
+      async function saveArtist() {
+        const id = document.getElementById("edit-artist-id").value;
+        const body = {
+          name: document.getElementById("artist-name").value.trim(),
+          tribe: document.getElementById("artist-tribe").value.trim() || null,
+          biography: document.getElementById("artist-bio").value.trim() || null,
+          birthYear:
+            parseInt(document.getElementById("artist-birth").value) || null,
+          country:
+            document.getElementById("artist-country").value.trim() ||
+            "Australia",
+        };
+        if (!body.name) return toast("Name is required", "error");
+        const r = id
+          ? await put(`/api/artists/${id}`, body)
+          : await post("/api/artists", body);
+        if (!r.ok) {
+          toast(r.data?.message || "Failed to save", "error");
+          return;
+        }
+        toast(`Artist ${id ? "updated" : "created"}!`, "success");
+        clearArtistForm();
+        loadAdmin();
+      }
+
+      async function deleteArtist(id) {
+        if (!confirm("Delete this artist? They must have no artworks.")) return;
+        const r = await del(`/api/artists/${id}`);
+        if (r.ok) {
+          toast("Artist deleted", "info");
+          loadAdmin();
+        } else toast(r.data?.message || "Cannot delete", "error");
+      }
+
+      async function renderAdminArtifacts(el) {
+        const [artR, artistR] = await Promise.all([
+          get("/api/artifacts?pageSize=100"),
+          get("/api/artists?pageSize=100"),
+        ]);
+        const artifacts = artR.ok ? artR.data.items || [] : [];
+        const artists = artistR.ok ? artistR.data.items || [] : [];
+        const opts = artists
+          .map((a) => `<option value="${a.id}">${a.name}</option>`)
+          .join("");
+        el.innerHTML = `
+    <div class="admin-header"><h2>🖼️ Manage Artworks</h2></div>
+    <div class="form-card">
+      <div class="form-card-title" id="artifact-form-title">Add New Artwork</div>
+      <input type="hidden" id="edit-artifact-id" />
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Title *</label><input type="text" class="input" id="artifact-title" /></div>
+        <div class="form-group"><label class="form-label">Artist *</label><select class="input" id="artifact-artist">${opts}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Art Type</label><input type="text" class="input" id="artifact-type-input" placeholder="e.g. Dot Painting" /></div>
+        <div class="form-group"><label class="form-label">Year Created</label><input type="number" class="input" id="artifact-year" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Image URL</label><input type="url" class="input" id="artifact-image" /></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="input" id="artifact-desc" style="min-height:80px;"></textarea></div>
+      <div style="display:flex;gap:0.75rem;">
+        <button class="btn btn-primary" onclick="saveArtifact()">Save Artwork</button>
+        <button class="btn btn-ghost" onclick="clearArtifactForm()">Clear</button>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Title</th><th>Artist</th><th>Type</th><th>Year</th><th>Actions</th></tr></thead>
+      <tbody>${artifacts
+        .map(
+          (a) => `
+        <tr>
+          <td><strong>${a.title}</strong></td>
+          <td>${a.artistName || "—"}</td>
+          <td>${a.artType || "—"}</td>
+          <td>${a.yearCreated || "—"}</td>
+          <td style="display:flex;gap:0.4rem;">
+            <button class="btn btn-outline btn-sm" onclick='editArtifact(${a.id}, ${JSON.stringify(a)})'>Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteArtifact(${a.id})">Delete</button>
+          </td>
+        </tr>`,
+        )
+        .join("")}
+      </tbody>
+    </table>`;
+      }
+
+      function editArtifact(id, a) {
+        document.getElementById("edit-artifact-id").value = id;
+        document.getElementById("artifact-title").value = a.title;
+        document.getElementById("artifact-artist").value = a.artistId;
+        document.getElementById("artifact-type-input").value = a.artType || "";
+        document.getElementById("artifact-year").value = a.yearCreated || "";
+        document.getElementById("artifact-image").value = a.imageUrl || "";
+        document.getElementById("artifact-desc").value = a.description || "";
+        document.getElementById("artifact-form-title").textContent =
+          "Edit Artwork";
+      }
+
+      function clearArtifactForm() {
+        [
+          "edit-artifact-id",
+          "artifact-title",
+          "artifact-type-input",
+          "artifact-year",
+          "artifact-image",
+          "artifact-desc",
+        ].forEach((id) => (document.getElementById(id).value = ""));
+        document.getElementById("artifact-form-title").textContent =
+          "Add New Artwork";
+      }
+
+      async function saveArtifact() {
+        const id = document.getElementById("edit-artifact-id").value;
+        const body = {
+          title: document.getElementById("artifact-title").value.trim(),
+          artistId: parseInt(document.getElementById("artifact-artist").value),
+          artType:
+            document.getElementById("artifact-type-input").value.trim() || null,
+          yearCreated:
+            parseInt(document.getElementById("artifact-year").value) || null,
+          imageUrl:
+            document.getElementById("artifact-image").value.trim() || null,
+          description:
+            document.getElementById("artifact-desc").value.trim() || null,
+        };
+        if (!body.title) return toast("Title is required", "error");
+        const r = id
+          ? await put(`/api/artifacts/${id}`, body)
+          : await post("/api/artifacts", body);
+        if (!r.ok) {
+          toast(r.data?.message || "Failed", "error");
+          return;
+        }
+        toast(`Artwork ${id ? "updated" : "created"}!`, "success");
+        clearArtifactForm();
+        loadAdmin();
+      }
+
+      async function deleteArtifact(id) {
+        if (!confirm("Delete this artwork?")) return;
+        const r = await del(`/api/artifacts/${id}`);
+        if (r.ok) {
+          toast("Artwork deleted", "info");
+          loadAdmin();
+        } else toast(r.data?.message || "Failed", "error");
+      }
+
+      async function renderAdminTags(el) {
+        const r = await get("/api/tags");
+        const tags = r.ok ? r.data : [];
+        el.innerHTML = `
+    <div class="admin-header"><h2>🏷️ Manage Tags</h2></div>
+    <div class="form-card" style="max-width:420px;">
+      <div class="form-card-title">Add New Tag</div>
+      <div class="form-group"><label class="form-label">Tag Name *</label><input type="text" class="input" id="tag-name" placeholder="e.g. Dreamtime" /></div>
+      <button class="btn btn-primary" onclick="saveTag()">Create Tag</button>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Tag Name</th><th>Artworks</th><th>Actions</th></tr></thead>
+      <tbody>${tags
+        .map(
+          (t) => `
+        <tr>
+          <td><strong>${t.name}</strong></td>
+          <td>${t.artifactCount}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteTag(${t.id})">Delete</button></td>
+        </tr>`,
+        )
+        .join("")}
+      </tbody>
+    </table>`;
+      }
+
+      async function saveTag() {
+        const name = document.getElementById("tag-name").value.trim();
+        if (!name) return toast("Tag name required", "error");
+        const r = await post("/api/tags", { name });
+        if (!r.ok) {
+          toast(r.data?.message || "Failed", "error");
+          return;
+        }
+        toast("Tag created!", "success");
+        document.getElementById("tag-name").value = "";
+        loadAdmin();
+      }
+
+      async function deleteTag(id) {
+        if (
+          !confirm("Delete this tag? It must not be assigned to any artworks.")
+        )
+          return;
+        const r = await del(`/api/tags/${id}`);
+        if (r.ok) {
+          toast("Tag deleted", "info");
+          loadAdmin();
+        } else toast(r.data?.message || "Cannot delete", "error");
+      }
+
+      async function renderAdminUsers(el) {
+        const r = await get("/api/users");
+        const users = r.ok ? r.data : [];
+        el.innerHTML = `
+    <div class="admin-header"><h2>👥 Manage Users</h2></div>
+    <table class="data-table">
+      <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>${users
+        .map(
+          (u) => `
+        <tr>
+          <td><strong>${u.username}</strong></td>
+          <td>${u.email}</td>
+          <td><span class="badge badge-${u.role.toLowerCase()}">${u.role}</span></td>
+          <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="toggleRole(${u.id},'${u.role}')">${u.role === "Admin" ? "Demote" : "Make Admin"}</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">Delete</button>
+          </td>
+        </tr>`,
+        )
+        .join("")}
+      </tbody>
+    </table>`;
+      }
+
+      async function toggleRole(id, currentRole) {
+        const newRole = currentRole === "Admin" ? "User" : "Admin";
+        if (!confirm(`Change role to ${newRole}?`)) return;
+        const r = await put(`/api/users/${id}`, { role: newRole });
+        if (r.ok) {
+          toast(`Role changed to ${newRole}`, "success");
+          loadAdmin();
+        } else toast(r.data?.message || "Failed", "error");
+      }
+
+      async function deleteUser(id) {
+        if (!confirm("Delete this user? This is irreversible.")) return;
+        const r = await del(`/api/users/${id}`);
+        if (r.ok) {
+          toast("User deleted", "info");
+          loadAdmin();
+        } else toast(r.data?.message || "Failed", "error");
+      }
+
+      // ═══════════════════════════════════════════════════════════
+      // INIT
+      // ═══════════════════════════════════════════════════════════
+      renderNav();
+      loadHome();
+
+      // Keyboard close for modal
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
+      document.getElementById("auth-modal").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) closeModal();
+      });
+    </script>
+  </body>
+</html>
