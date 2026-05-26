@@ -112,7 +112,7 @@ public class EmailService : IEmailService
 </body>
 </html>";
 
-        await SendOrderConfirmationAsync(toEmail, username, order);
+        await SendAsync(toEmail, subject, body);
     }
 
     private async Task SendAsync(string toEmail, string subject, string htmlBody)
