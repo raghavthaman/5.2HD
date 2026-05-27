@@ -92,7 +92,6 @@ public class OrderService : IOrderService
             if (artifact.StockQuantity <= 0)
             {
                 artifact.StockQuantity = 0;
-                artifact.IsAvailableForPurchase = false;
             }
 
             _artifactRepository.Update(artifact);

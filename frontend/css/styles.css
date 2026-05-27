@@ -232,6 +232,14 @@ nav {
   padding: 0.35rem 0.9rem;
   font-size: 0.8rem;
 }
+.btn:disabled {
+  background: #d4c4b0 !important;
+  border-color: #d4c4b0 !important;
+  color: #8c7f6e !important;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
 
 .user-pill {
   display: flex;
@@ -1382,6 +1390,20 @@ footer strong {
   border: 1.5px solid rgba(168, 52, 34, 0.3);
   border-radius: 2rem;
   background: rgba(168, 52, 34, 0.06);
+}
+.badge-out-of-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--ochre-dark);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.7rem;
+  border: 1.5px solid rgba(140, 78, 29, 0.4);
+  border-radius: 2rem;
+  background: rgba(140, 78, 29, 0.06);
 }
 
 /* ═══════════════════════════════════════════════════════════

@@ -22,8 +22,16 @@ function addToCart(artifact) {
         toast("This artwork is not for sale.", "error");
         return;
     }
+    if (artifact.stockQuantity !== undefined && artifact.stockQuantity <= 0) {
+        toast("This artwork is out of stock.", "error");
+        return;
+    }
     const existing = cart.find(item => item.id === artifact.id);
     if (existing) {
+        if (artifact.stockQuantity !== undefined && existing.quantity >= artifact.stockQuantity) {
+            toast(`Cannot add more. Only ${artifact.stockQuantity} items in stock.`, "error");
+            return;
+        }
         existing.quantity += 1;
     } else {
         cart.push({
@@ -32,7 +40,8 @@ function addToCart(artifact) {
             artistName: artifact.artistName,
             price: artifact.price,
             imageUrl: artifact.imageUrl,
-            quantity: 1
+            quantity: 1,
+            stockQuantity: artifact.stockQuantity
         });
     }
     saveCart();
@@ -42,6 +51,10 @@ function addToCart(artifact) {
 function updateQuantity(id, delta) {
     const item = cart.find(i => i.id === id);
     if (item) {
+        if (delta > 0 && item.stockQuantity !== undefined && item.quantity + delta > item.stockQuantity) {
+            toast(`Cannot increase quantity. Only ${item.stockQuantity} items in stock.`, "error");
+            return;
+        }
         item.quantity += delta;
         if (item.quantity <= 0) {
             cart = cart.filter(i => i.id !== id);

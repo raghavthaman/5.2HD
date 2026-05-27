@@ -48,6 +48,7 @@ function renderArtifactCards(items, containerId) {
                 <div class="card-img-overlay">
                     <span class="tag-chip">${a.artType || 'Artwork'}</span>
                     ${a.yearCreated ? `<span class="tag-chip">${a.yearCreated}</span>` : ''}
+                    ${a.isAvailableForPurchase && a.stockQuantity <= 0 ? `<span class="tag-chip" style="background:var(--red-clay);color:white;font-weight:bold;">OUT OF STOCK</span>` : ''}
                 </div>
             </div>
             <div class="card-body">
@@ -56,11 +57,15 @@ function renderArtifactCards(items, containerId) {
                 <p class="card-desc">${escHtml(a.description || '')}</p>
                 <div class="card-footer">
                     ${a.isAvailableForPurchase
-                        ? `<span class="card-price">$${Number(a.price).toFixed(2)} AUD</span>
-                           <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart({
-                               id: ${a.id}, title: '${escAttr(a.title)}', artistName: '${escAttr(a.artistName || '')}',
-                               price: ${a.price}, imageUrl: '${escAttr(a.imageUrl || '')}', isAvailableForPurchase: true
-                           })">Add to Cart</button>`
+                        ? (a.stockQuantity <= 0
+                            ? `<span class="card-price" style="text-decoration: line-through; opacity: 0.6;">$${Number(a.price).toFixed(2)} AUD</span>
+                               <button class="btn btn-primary btn-sm" disabled onclick="event.stopPropagation();">Out of Stock</button>`
+                            : `<span class="card-price">$${Number(a.price).toFixed(2)} AUD</span>
+                               <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart({
+                                   id: ${a.id}, title: '${escAttr(a.title)}', artistName: '${escAttr(a.artistName || '')}',
+                                   price: ${a.price}, imageUrl: '${escAttr(a.imageUrl || '')}', isAvailableForPurchase: true, stockQuantity: ${a.stockQuantity}
+                               })">Add to Cart</button>`
+                          )
                         : `<span class="badge-not-for-sale">Not for Sale</span>
                            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); viewArtifact(${a.id})">View Details</button>`
                     }
@@ -130,11 +135,16 @@ async function viewArtifact(id) {
 
             <div class="detail-action-bar">
                 ${a.isAvailableForPurchase
-                    ? `<div class="detail-price">$${Number(a.price).toFixed(2)} AUD</div>
-                       <button class="btn btn-primary" onclick="addToCart({
-                           id: ${a.id}, title: '${escAttr(a.title)}', artistName: '${escAttr(a.artistName || '')}',
-                           price: ${a.price}, imageUrl: '${escAttr(a.imageUrl || '')}', isAvailableForPurchase: true
-                       })">Add to Cart</button>`
+                    ? (a.stockQuantity <= 0
+                        ? `<div class="detail-price" style="text-decoration: line-through; opacity: 0.6;">$${Number(a.price).toFixed(2)} AUD</div>
+                           <span class="badge-out-of-stock" style="font-size:1rem;padding:0.5rem 1.2rem;">Out of Stock</span>
+                           <button class="btn btn-primary" disabled>Out of Stock</button>`
+                        : `<div class="detail-price">$${Number(a.price).toFixed(2)} AUD</div>
+                           <button class="btn btn-primary" onclick="addToCart({
+                               id: ${a.id}, title: '${escAttr(a.title)}', artistName: '${escAttr(a.artistName || '')}',
+                               price: ${a.price}, imageUrl: '${escAttr(a.imageUrl || '')}', isAvailableForPurchase: true, stockQuantity: ${a.stockQuantity}
+                           })">Add to Cart</button>`
+                      )
                     : `<div style="display:flex;align-items:center;gap:1rem;">
                            <span class="badge-not-for-sale" style="font-size:1rem;padding:0.5rem 1.2rem;">Not for Sale</span>
                            <span style="font-size:0.85rem;color:#8a7060;">This artwork is on display only.</span>
