@@ -133,7 +133,10 @@ public static class DependencyInjection
                 {
                     if (origin == "null") return true;
                     if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri)) return false;
-                    return uri.Host == "localhost" || uri.Host == "127.0.0.1";
+                    return uri.Host == "localhost" || 
+                           uri.Host == "127.0.0.1" || 
+                           uri.Host.EndsWith("vercel.app") ||
+                           uri.Host == "aboriginal-art-gallery.vercel.app";
                 })
                 .AllowAnyHeader()
                 .AllowAnyMethod();
