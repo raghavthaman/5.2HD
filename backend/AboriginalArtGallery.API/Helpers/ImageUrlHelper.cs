@@ -9,7 +9,12 @@ public static class ImageUrlHelper
         
         if (request != null)
         {
-            var baseUri = $"{request.Scheme}://{request.Host}{request.PathBase}";
+            var scheme = request.Headers["X-Forwarded-Proto"].ToString();
+            if (string.IsNullOrEmpty(scheme))
+            {
+                scheme = request.Scheme;
+            }
+            var baseUri = $"{scheme}://{request.Host}{request.PathBase}";
             return $"{baseUri}/{imageUrl.TrimStart('/')}";
         }
         
