@@ -167,4 +167,4 @@ The application is deployed as a unified Docker container on **Render** with the
 
 ## 📄 License
 
-This project was developed as part of the SIT331 Task 5.2HD assignment at Deakin University.
+This project was developed as part of the assignment at Chitkara University.
