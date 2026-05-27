@@ -16,15 +16,6 @@
 
 ---
 
-## 🔑 Demo Credentials
-
-| Role | Email | Password |
-|:-----|:------|:---------|
-| **Admin** | `admin@example.com` | `Pass@123` |
-| **User** | `user@example.com` | `Pass@123` |
-
-> Alternatively, you can create your own account by clicking **Register** and completing the OTP email verification flow.
-
 ---
 
 ## ✨ Features
