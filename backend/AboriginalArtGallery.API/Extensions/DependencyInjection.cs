@@ -165,6 +165,9 @@ public static class DependencyInjection
 
         app.UseHttpsRedirection();
 
+        // Serve default documents (like index.html) for root request
+        app.UseDefaultFiles();
+
         // Serve local artwork static files from wwwroot
         app.UseStaticFiles();
 
