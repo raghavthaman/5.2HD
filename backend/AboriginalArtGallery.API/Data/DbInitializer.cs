@@ -13,6 +13,9 @@ public static class DbInitializer
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
 
+            // 0. Automatically apply database migrations at startup
+            db.Database.Migrate();
+
             // 1. Ensure Local Images Directory exists and is populated
             var webRootPath = env.WebRootPath ?? Path.Combine(env.ContentRootPath, "wwwroot");
             var imagesDir = Path.Combine(webRootPath, "images");
