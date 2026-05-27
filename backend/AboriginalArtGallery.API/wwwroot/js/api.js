@@ -1,7 +1,11 @@
 // ═══════════════════════════════════════════════════════════
 // API HELPERS
 // ═══════════════════════════════════════════════════════════
-const API = "";
+const API = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:5161"
+    : (window.location.origin.includes("vercel.app")
+        ? "https://aboriginal-art-gallery-api.onrender.com" // Replace with your actual Render URL
+        : "");
 
 let state = {
     token: localStorage.getItem("gallery_token"),
